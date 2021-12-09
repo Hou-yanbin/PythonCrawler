@@ -8,17 +8,60 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
-
+# 主页面
 main_page_content = requests.get("https://www.4hu.tv/pic/toupai/")
-
+main_page_content.encoding = 'utf-8'
 main_page = BeautifulSoup(main_page_content.text, "html.parser")
-n = 1
+# print(main_page)
+# 子页面
+# 找分类图片的标签
 
-main_page.encoding="utf-8"
-index1=main_page.find("div", attrs={"class": " row col6 clearfix"})
-child_url = index1.get("href")
-main_page.encoding="utf-8"
-print(child_url)
+div=main_page.find("div",class_="row col6 clearfix")
+# print(div)
+
+# 找dt标签
+# dt=div.find_all("dt")
+# print(dt)
+# print(len(dt))
+# print(dt.href.string)
+# href=dt.find("href")
+# print(href)
+# print(dt['href'])
+
+
+# 提取a标签
+# a=div.find_all("a")
+# print(a)
+list1=div.find_all('a')
+list2=list1[::2]
+n=0
+for k in list2:
+    child_href="https://www.4hu.tv"+k['href']
+    # print(body_href)
+    resp = requests.get(child_href)
+    resp.encoding = 'utf-8'
+    child_page = BeautifulSoup(resp.text, "html.parser")
+# print(child_page)
+#     print(child_page.text)
+    img = child_page.find("div", attrs={"class": "pic"}).find("img")
+    # print(img)
+    open(f"img/tu{n}.jpg", "wb").write(requests.get(img.get("src")).content)
+    n += 1
+    print(f"下载{n}张图片了")
+# a=dt.get('a')
+# print(a)
+# child_page=requests.get
+# resp = requests.get()
+#
+#  resp.encoding='utf-8'
+#  child = BeautifulSoup(resp.text,"html.parser")
+#  div = child.find("div",class_="ImageBody")
+#  img = div.find("img")
+# main_page.encoding="utf-8"
+# index1=main_page.find("div", attrs={"class": " row col6 clearfix"})
+# child_url = index1.get("href")
+# main_page.encoding="utf-8"
+# print(child_url)
 # child_url = index1.get("href")
 # print(child_url)
 # for a in alist:
